@@ -1,0 +1,1087 @@
+mysql> create database bookstore;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> use bookstore;
+Database changed
+mysql> -- 1.Authors
+mysql> create table authors(
+    -> author_id int auto_increment primary key,
+    -> author_name varchar(100) not NULL,
+    -> bio text
+    -> );
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> -- 2.Genres
+mysql> create table genres(
+    -> genre_id int auto_increment primary key,
+    -> genre_name varchar(50) not NULL
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> -- 3.Customers
+mysql> create table customers(
+    -> customer_id int auto_increment primary key,
+    -> name varchar(100),
+    -> email varchar(100) unique,
+    -> city varchar(50),
+    -> join_date date
+    -> );
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> -- 4.Books
+mysql> create table books(
+    -> book_id int auto_increment primary key,
+    -> title varchar(150),
+    -> price decimal(10,2),
+    -> stock_quantity int,
+    -> author_id int,
+    -> genre_id int,
+    -> foregin key(author_id) references authors(author_id),
+    -> foregin key(genre_id) references genres(genre_id),
+    -> );
+mysql> CREATE TABLE Books (    book_id INT AUTO_INCREMENT PRIMARY KEY,    title VARCHAR(150),    price DECIMAL(10,2),    stock_quantity INT,    author_id INT,    genre_id INT,        FOREIGN KEY (author_id) REFERENCES Authors(author_id),    FOREIGN KEY (genre_id) REFERENCES Genres(genre_id));
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> -- 5.Orders
+mysql> create table orders(
+    -> order_id int auto_increment primary key,
+    -> order_date date,
+    -> customer_id int,
+    -> FOREIGN KEY (customer_id) REFERENCES Customers(customer_id)
+    -> );
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> -- 6.Order_Details
+mysql> create table order_details(
+    -> detail_id int auto_increment primary key,
+    -> order_id int,
+    -> book_id int,
+    -> quantity_ordered int,
+    -> price_at_time_of_order decimal(10,2),
+    -> FOREIGN KEY (order_id) REFERENCES Orders(order_id),    FOREIGN KEY (book_id) REFERENCES Books(book_id)
+    -> );
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> -- Insert Authors
+mysql> insert into authors(author_name, bio) values
+    -> ('Chetan Bhagat', 'Indian author known for 5 Point Someone.'),('Arundhati Roy', 'Winner of the Man Booker Prize.'),('R.K. Narayan', 'Creator of Malgudi Days.'),('Amish Tripathi', 'Known for the Shiva Trilogy.');
+Query OK, 4 rows affected (0.02 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> -- insert genres
+mysql> INSERT INTO Genres (genre_name) VALUES('Fiction'),('Mythology'),('History'),('Romance');
+Query OK, 4 rows affected (0.01 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> -- insert books
+mysql> INSERT INTO Books(title, price, stock_quantity, author_id, genre_id)VALUES('Five Point Someone', 250.00, 50, 1, 1),('2 States', 300.00, 40, 1, 4),('The God of Small Things', 450.00, 20, 2, 1),('Malgudi Days', 200.00, 100, 3, 1),('The Immortals of Meluha', 399.00, 60, 4, 2);
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> -- insert customers
+mysql> INSERT INTO Customers(name, email, city, join_date)VALUES('Aarav Sharma', 'aarav@gmail.com', 'Mumbai', '2023-01-10'),('Diya Patel', 'diya.p@yahoo.com', 'Ahmedabad', '2023-02-15'),('Vihaan Reddy', 'vihaan.r@outlook.com', 'Hyderabad', '2023-03-20'),('Ananya Gupta', 'ananya.g@gmail.com', 'Delhi', '2023-04-05');
+Query OK, 4 rows affected (0.01 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> -- insert orders
+mysql> INSERT INTO Orders(order_date, customer_id)VALUES('2023-05-01', 1),('2023-05-03', 2),('2023-05-05', 1),('2023-06-01', 3);
+Query OK, 4 rows affected (0.01 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> -- insert order_details
+mysql> INSERT INTO Order_Details(order_id, book_id, quantity_ordered, price_at_time_of_order)VALUES(1, 1, 1, 250.00),(1, 4, 2, 200.00),(2, 5, 1, 399.00),(3, 2, 1, 300.00),(4, 3, 1, 450.00);
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> -- verify Data
+mysql> select *from authors;
++-----------+----------------+------------------------------------------+
+| author_id | author_name    | bio                                      |
++-----------+----------------+------------------------------------------+
+|         1 | Chetan Bhagat  | Indian author known for 5 Point Someone. |
+|         2 | Arundhati Roy  | Winner of the Man Booker Prize.          |
+|         3 | R.K. Narayan   | Creator of Malgudi Days.                 |
+|         4 | Amish Tripathi | Known for the Shiva Trilogy.             |
++-----------+----------------+------------------------------------------+
+4 rows in set (0.01 sec)
+
+mysql> select *from genres;
++----------+------------+
+| genre_id | genre_name |
++----------+------------+
+|        1 | Fiction    |
+|        2 | Mythology  |
+|        3 | History    |
+|        4 | Romance    |
++----------+------------+
+4 rows in set (0.00 sec)
+
+mysql> select *from customers;
++-------------+--------------+----------------------+-----------+------------+
+| customer_id | name         | email                | city      | join_date  |
++-------------+--------------+----------------------+-----------+------------+
+|           1 | Aarav Sharma | aarav@gmail.com      | Mumbai    | 2023-01-10 |
+|           2 | Diya Patel   | diya.p@yahoo.com     | Ahmedabad | 2023-02-15 |
+|           3 | Vihaan Reddy | vihaan.r@outlook.com | Hyderabad | 2023-03-20 |
+|           4 | Ananya Gupta | ananya.g@gmail.com   | Delhi     | 2023-04-05 |
++-------------+--------------+----------------------+-----------+------------+
+4 rows in set (0.00 sec)
+
+mysql> select *from books;
++---------+-------------------------+--------+----------------+-----------+----------+
+| book_id | title                   | price  | stock_quantity | author_id | genre_id |
++---------+-------------------------+--------+----------------+-----------+----------+
+|       1 | Five Point Someone      | 250.00 |             50 |         1 |        1 |
+|       2 | 2 States                | 300.00 |             40 |         1 |        4 |
+|       3 | The God of Small Things | 450.00 |             20 |         2 |        1 |
+|       4 | Malgudi Days            | 200.00 |            100 |         3 |        1 |
+|       5 | The Immortals of Meluha | 399.00 |             60 |         4 |        2 |
++---------+-------------------------+--------+----------------+-----------+----------+
+5 rows in set (0.00 sec)
+
+mysql> select*from orders;
++----------+------------+-------------+
+| order_id | order_date | customer_id |
++----------+------------+-------------+
+|        1 | 2023-05-01 |           1 |
+|        2 | 2023-05-03 |           2 |
+|        3 | 2023-05-05 |           1 |
+|        4 | 2023-06-01 |           3 |
++----------+------------+-------------+
+4 rows in set (0.00 sec)
+
+mysql> select *from order_details;
++-----------+----------+---------+------------------+------------------------+
+| detail_id | order_id | book_id | quantity_ordered | price_at_time_of_order |
++-----------+----------+---------+------------------+------------------------+
+|         1 |        1 |       1 |                1 |                 250.00 |
+|         2 |        1 |       4 |                2 |                 200.00 |
+|         3 |        2 |       5 |                1 |                 399.00 |
+|         4 |        3 |       2 |                1 |                 300.00 |
+|         5 |        4 |       3 |                1 |                 450.00 |
++-----------+----------+---------+------------------+------------------------+
+5 rows in set (0.00 sec)
+
+mysql> -- level 1: Beginner
+mysql> ----------------------
+mysql> -- 1.List all books that cost less than ?300.
+mysql> select title,
+    -> price from books where price < 300;
++--------------------+--------+
+| title              | price  |
++--------------------+--------+
+| Five Point Someone | 250.00 |
+| Malgudi Days       | 200.00 |
++--------------------+--------+
+2 rows in set (0.01 sec)
+
+mysql> -- 2. Find the email address of the customer named Vihaan Reddy.
+mysql> select email from customers where name = 'Vihaan Reddy';
++----------------------+
+| email                |
++----------------------+
+| vihaan.r@outlook.com |
++----------------------+
+1 row in set (0.00 sec)
+
+mysql> -- 3. Display the titles of all books that belong to the Fiction genre.
+mysql> select title from books where genre_id = (select genre_id from genres where genre_name = 'Fiction');
++-------------------------+
+| title                   |
++-------------------------+
+| Five Point Someone      |
+| The God of Small Things |
+| Malgudi Days            |
++-------------------------+
+3 rows in set (0.01 sec)
+
+mysql> -- 4. Display the names of all authors in alphabetical order.
+mysql> select author_name from authors order by author_name ASC;
++----------------+
+| author_name    |
++----------------+
+| Amish Tripathi |
+| Arundhati Roy  |
+| Chetan Bhagat  |
+| R.K. Narayan   |
++----------------+
+4 rows in set (0.01 sec)
+
+mysql> -- 5. Count how many customers belong to the city Mumbai.
+mysql> select count(*) from customers where city = 'Mumbai';
++----------+
+| count(*) |
++----------+
+|        1 |
++----------+
+1 row in set (0.01 sec)
+
+mysql> -- 6. Display the details of the most expensive book available in the bookstore.
+mysql> SELECT * FROM Books ORDER BY price DESC LIMIT 1;
++---------+-------------------------+--------+----------------+-----------+----------+
+| book_id | title                   | price  | stock_quantity | author_id | genre_id |
++---------+-------------------------+--------+----------------+-----------+----------+
+|       3 | The God of Small Things | 450.00 |             20 |         2 |        1 |
++---------+-------------------------+--------+----------------+-----------+----------+
+1 row in set (0.00 sec)
+
+mysql> -- 7.Show the title, price, and stock quantity of all books.
+mysql> SELECT title, price, stock_quantity FROM Books;
++-------------------------+--------+----------------+
+| title                   | price  | stock_quantity |
++-------------------------+--------+----------------+
+| Five Point Someone      | 250.00 |             50 |
+| 2 States                | 300.00 |             40 |
+| The God of Small Things | 450.00 |             20 |
+| Malgudi Days            | 200.00 |            100 |
+| The Immortals of Meluha | 399.00 |             60 |
++-------------------------+--------+----------------+
+5 rows in set (0.00 sec)
+
+mysql> -- Display all customers who registered after 1st January 2023.
+mysql> select *from customers where join_date > '2023-01-01';
++-------------+--------------+----------------------+-----------+------------+
+| customer_id | name         | email                | city      | join_date  |
++-------------+--------------+----------------------+-----------+------------+
+|           1 | Aarav Sharma | aarav@gmail.com      | Mumbai    | 2023-01-10 |
+|           2 | Diya Patel   | diya.p@yahoo.com     | Ahmedabad | 2023-02-15 |
+|           3 | Vihaan Reddy | vihaan.r@outlook.com | Hyderabad | 2023-03-20 |
+|           4 | Ananya Gupta | ananya.g@gmail.com   | Delhi     | 2023-04-05 |
++-------------+--------------+----------------------+-----------+------------+
+4 rows in set (0.01 sec)
+
+mysql> -- 9. Find all books whose stock quantity is greater than 20.
+mysql> select * from books where stock_quantity > 20;
++---------+-------------------------+--------+----------------+-----------+----------+
+| book_id | title                   | price  | stock_quantity | author_id | genre_id |
++---------+-------------------------+--------+----------------+-----------+----------+
+|       1 | Five Point Someone      | 250.00 |             50 |         1 |        1 |
+|       2 | 2 States                | 300.00 |             40 |         1 |        4 |
+|       4 | Malgudi Days            | 200.00 |            100 |         3 |        1 |
+|       5 | The Immortals of Meluha | 399.00 |             60 |         4 |        2 |
++---------+-------------------------+--------+----------------+-----------+----------+
+4 rows in set (0.00 sec)
+
+mysql> -- 10. Display all genres available in the bookstore.
+mysql> select *from genres;
++----------+------------+
+| genre_id | genre_name |
++----------+------------+
+|        1 | Fiction    |
+|        2 | Mythology  |
+|        3 | History    |
+|        4 | Romance    |
++----------+------------+
+4 rows in set (0.00 sec)
+
+mysql> -- 11.Find all books written by a particular author (for example, R.K. Narayan).
+mysql> select title from books where author_id = (select author_id from authors where author_name = 'R.K. Narayan');
++--------------+
+| title        |
++--------------+
+| Malgudi Days |
++--------------+
+1 row in set (0.00 sec)
+
+mysql> -- 12.Display all orders placed by a specific customer.
+mysql> select *from orders where customer_id = (select customer_id from customers where name = 'Aarav Sharma');
++----------+------------+-------------+
+| order_id | order_date | customer_id |
++----------+------------+-------------+
+|        1 | 2023-05-01 |           1 |
+|        3 | 2023-05-05 |           1 |
++----------+------------+-------------+
+2 rows in set (0.00 sec)
+
+mysql> -- 13.Find the cheapest book in the bookstore.
+mysql> select *from books order by price ASC limit 1;
++---------+--------------+--------+----------------+-----------+----------+
+| book_id | title        | price  | stock_quantity | author_id | genre_id |
++---------+--------------+--------+----------------+-----------+----------+
+|       4 | Malgudi Days | 200.00 |            100 |         3 |        1 |
++---------+--------------+--------+----------------+-----------+----------+
+1 row in set (0.00 sec)
+
+mysql> -- 14.Display the names of customers whose email ends with gmail.com.
+mysql> select name from customers where email like '%gmail.com';
++--------------+
+| name         |
++--------------+
+| Aarav Sharma |
+| Ananya Gupta |
++--------------+
+2 rows in set (0.00 sec)
+
+mysql> -- 15.count the total number of books available in the bookstore.
+mysql> select count(*) from books;
++----------+
+| count(*) |
++----------+
+|        5 |
++----------+
+1 row in set (0.00 sec)
+
+mysql> -- Level 2: Intermediate
+mysql> -------------------------
+mysql> 1.Display the title of every book along with its corresponding author's name.
+mysql> select b.title, a.author_name from books b join authors a on b.author_id = a.author_id;
++-------------------------+----------------+
+| title                   | author_name    |
++-------------------------+----------------+
+| Five Point Someone      | Chetan Bhagat  |
+| 2 States                | Chetan Bhagat  |
+| The God of Small Things | Arundhati Roy  |
+| Malgudi Days            | R.K. Narayan   |
+| The Immortals of Meluha | Amish Tripathi |
++-------------------------+----------------+
+5 rows in set (0.00 sec)
+
+mysql> -- 2. Calculate the total amount spent by the customer Aarav Sharma.
+mysql> select o. *
+    -> from Orders o
+    -> join customers c ON o.customer_id = c.customer_id
+    -> where c.name = 'Aarav Sharma';
++----------+------------+-------------+
+| order_id | order_date | customer_id |
++----------+------------+-------------+
+|        1 | 2023-05-01 |           1 |
+|        3 | 2023-05-05 |           1 |
++----------+------------+-------------+
+2 rows in set (0.00 sec)
+
+mysql> -- 3.Find the genre that has the highest total stock quantity.
+mysql> select g.genre_name,
+    -> sum(b.stock_quantity)as total_stock
+    -> from books b join genres g on b.genre_id = g.genre_id
+    -> group by g.genre_name order by total_stock DESC limit 1;
++------------+-------------+
+| genre_name | total_stock |
++------------+-------------+
+| Fiction    |         170 |
++------------+-------------+
+1 row in set (0.01 sec)
+
+mysql> -- 4.Display all orders placed during the month of May 2023.
+mysql> select *from orders where month(order_date)=5 and year(order_date)=2023;
++----------+------------+-------------+
+| order_id | order_date | customer_id |
++----------+------------+-------------+
+|        1 | 2023-05-01 |           1 |
+|        2 | 2023-05-03 |           2 |
+|        3 | 2023-05-05 |           1 |
++----------+------------+-------------+
+3 rows in set (0.01 sec)
+
+mysql> --5.Find the books that have never been ordered by any customer.
+mysql> select title from books where book_id NOT IN (select book_id from order_details);
+Empty set (0.01 sec)
+mysql> --6.Calculate the total number of books sold by each author.
+mysql> select a.author_name,
+    -> SUM(od.quantity_ordered)as total_books_sold
+    -> from authors a
+    -> join books b ON a.author_id = b.author_id
+    -> join order_details od ON b.book_id = od.book_id
+    -> group by a.author_name;
++----------------+------------------+
+| author_name    | total_books_sold |
++----------------+------------------+
+| Chetan Bhagat  |                2 |
+| Arundhati Roy  |                1 |
+| R.K. Narayan   |                2 |
+| Amish Tripathi |                1 |
++----------------+------------------+
+4 rows in set (0.00 sec)
+
+mysql> -- 7.Display each customer's name along with the total number of orders they have placed.
+mysql> select c.name,
+    -> count(o.order_id)as total_orders
+    -> from customers c
+    -> left join orders o ON c.customer_id = o.customer_id
+    -> group by c.name;
++--------------+--------------+
+| name         | total_orders |
++--------------+--------------+
+| Aarav Sharma |            2 |
+| Diya Patel   |            1 |
+| Vihaan Reddy |            1 |
+| Ananya Gupta |            0 |
++--------------+--------------+
+4 rows in set (0.00 sec)
+
+mysql> -- 8.Find the average price of books available in each genre.
+mysql> select g.genre_name,
+    -> AVG(b.price)as average_price
+    -> from genres g
+    -> join books b ON g.genre_id = b.genre_id
+    -> group by g.genre_name;
++------------+---------------+
+| genre_name | average_price |
++------------+---------------+
+| Fiction    |    300.000000 |
+| Mythology  |    399.000000 |
+| Romance    |    300.000000 |
++------------+---------------+
+3 rows in set (0.01 sec)
+
+mysql> --9.Display all books along with their genre names.
+mysql> SELECT b.title,
+    -> g.genre_name
+    -> FROM Books b
+    -> JOIN Genres g ON b.genre_id = g.genre_id;
++-------------------------+------------+
+| title                   | genre_name |
++-------------------------+------------+
+| Five Point Someone      | Fiction    |
+| The God of Small Things | Fiction    |
+| Malgudi Days            | Fiction    |
+| The Immortals of Meluha | Mythology  |
+| 2 States                | Romance    |
++-------------------------+------------+
+5 rows in set (0.00 sec)
+
+mysql> -- 10.Find customers who have placed more than three orders.
+mysql> select c.name,
+    -> count(o.order_id) as total_orders
+    -> from customers c
+    -> join orders o ON c.customer_id = o.customer_id
+    -> group by c.name
+    -> having count(o.order_id) > 3;
+Empty set (0.00 sec)
+
+mysql> -- 11.Display the total quantity of books sold for each book title.
+mysql> select b.title,
+    -> SUM(od.quantity_ordered) as total_sold
+    -> from books b
+    -> join order_details od ON b.book_id = od.book_id
+    -> group by b.title;
++-------------------------+------------+
+| title                   | total_sold |
++-------------------------+------------+
+| Five Point Someone      |          1 |
+| 2 States                |          1 |
+| The God of Small Things |          1 |
+| Malgudi Days            |          2 |
+| The Immortals of Meluha |          1 |
++-------------------------+------------+
+5 rows in set (0.00 sec)
+
+mysql> -- 12.Find the total revenue generated by each book.
+mysql> select b.title,
+    -> SUM(od.quantity_ordered * od.price_at_time_of_order) as revenue
+    -> from books b
+    -> join order_details od ON b.book_id = od.book_id
+    -> group by b.title;
++-------------------------+---------+
+| title                   | revenue |
++-------------------------+---------+
+| Five Point Someone      |  250.00 |
+| 2 States                |  300.00 |
+| The God of Small Things |  450.00 |
+| Malgudi Days            |  400.00 |
+| The Immortals of Meluha |  399.00 |
++-------------------------+---------+
+5 rows in set (0.00 sec)
+
+mysql> -- 13.Display all orders along with customer names and order dates.
+mysql> select o.order_id,
+    -> c.name,
+    -> o.order_date
+    -> from orders o
+    -> join customers c ON o.customer_id = c.customer_id;
++----------+--------------+------------+
+| order_id | name         | order_date |
++----------+--------------+------------+
+|        1 | Aarav Sharma | 2023-05-01 |
+|        2 | Diya Patel   | 2023-05-03 |
+|        3 | Aarav Sharma | 2023-05-05 |
+|        4 | Vihaan Reddy | 2023-06-01 |
++----------+--------------+------------+
+4 rows in set (0.00 sec)
+
+mysql> --14.Find authors who have written more than two books.
+mysql> select a.author_name,
+    -> count(b.book_id)as total_books
+    -> from authors a
+    -> join books b on a.author_id = b.author_id
+    -> group by a.author_name
+    -> having count(b.book_id) > 2;
+Empty set (0.00 sec)
+
+mysql> -- 15.Display genres that contain more than five books.
+mysql> select g.genre_name,
+    -> count(b.book_id) as total_books
+    -> from genres g
+    -> join books b ON g.genre_id = b.genre_id
+    -> group by g.genre_name
+    -> having count(b.book_id) > 5;
+Empty set (0.00 sec)
+
+mysql> LEVEL 3 : ADVANCED
+    -> -------------------
+    -> ^C
+mysql> -- 1.Find the customer who has placed the highest number of orders.
+mysql> select c.name,
+    -> count(o.order_id)as total_orders
+    -> from customers c
+    -> join orders o ON c.customer_id = o.customer_id
+    -> group by c.name
+    -> order by total_orders DESC
+    -> limit 1;
++--------------+--------------+
+| name         | total_orders |
++--------------+--------------+
+| Aarav Sharma |            2 |
++--------------+--------------+
+1 row in set (0.00 sec)
+
+mysql> -- 2. Display authors whose average book price is greater than ?300.
+mysql> select a.author_name,
+    -> AVG(b.price)as average_price
+    -> from authors a
+    -> join books b ON a.author_id = b.author_id
+    -> group by a.author_name
+    -> having AVG(b.price) > 300;
++----------------+---------------+
+| author_name    | average_price |
++----------------+---------------+
+| Arundhati Roy  |    450.000000 |
+| Amish Tripathi |    399.000000 |
++----------------+---------------+
+2 rows in set (0.00 sec)
+
+mysql> -- 3.Find the best-selling book based on the highest quantity sold.
+mysql> SELECT b.title,
+    -> SUM(od.quantity_ordered) AS total_sold
+    -> FROM Books b
+    -> JOIN Order_Details od ON b.book_id = od.book_id
+    -> GROUP BY b.title
+    -> ORDER BY total_sold DESC
+    -> LIMIT 1;
++--------------+------------+
+| title        | total_sold |
++--------------+------------+
+| Malgudi Days |          2 |
++--------------+------------+
+1 row in set (0.00 sec)
+
+mysql> -- 4.Display customers who purchased both "Malgudi Days" and "Five Point Someone".
+mysql> select c.name
+    -> from customers c
+    -> join orders o ON c.customer_id = o.customer_id
+    -> join order_details od ON o.order_id = od.order_id
+    -> join books b ON od.book_id = b.book_id
+    -> where b.title IN ('Malgudi Days','Five Point Someone')
+    -> group by c.name
+    -> having count(distinct b.title)=2;
++--------------+
+| name         |
++--------------+
+| Aarav Sharma |
++--------------+
+1 row in set (0.01 sec)
+
+mysql> -- 5.Find customers who have not placed any orders during the last six months.
+mysql> select c.name
+    -> from customers c
+    -> where c.customer_id NOT IN(
+    -> select customer_id
+    -> from orders
+    -> where order_date >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+    -> );
++--------------+
+| name         |
++--------------+
+| Aarav Sharma |
+| Diya Patel   |
+| Vihaan Reddy |
+| Ananya Gupta |
++--------------+
+4 rows in set (0.01 sec)
+
+mysql> -- 6.Calculate the total revenue generated from Fiction books.
+mysql> SELECT SUM(od.quantity_ordered * od.price_at_time_of_order) AS fiction_revenue
+    -> from order_details od
+    -> join books b ON od.book_id = b.book_id
+    -> join genres g ON b.genre_id = g.genre_id
+    -> where g.genre_name = 'Fiction';
++-----------------+
+| fiction_revenue |
++-----------------+
+|         1100.00 |
++-----------------+
+1 row in set (0.00 sec)
+
+mysql> -- 7.Find the top five customers based on the total amount spent.
+mysql> select c.name,
+    -> SUM(od.quantity_ordered * od.price_at_time_of_order) AS total_spent
+    -> from customers c
+    -> join orders o ON c.customer_id = o.customer_id
+    -> join order_details od ON o.order_id = od.order_id
+    -> group by c.name
+    -> order by total_spent DESC
+    -> limit 5;
++--------------+-------------+
+| name         | total_spent |
++--------------+-------------+
+| Aarav Sharma |      950.00 |
+| Vihaan Reddy |      450.00 |
+| Diya Patel   |      399.00 |
++--------------+-------------+
+3 rows in set (0.00 sec)
+
+mysql> -- 8.Display the book that generated the highest revenue.
+mysql> SELECT b.title,
+    -> SUM(od.quantity_ordered * od.price_at_time_of_order) AS revenue
+    -> FROM Books b
+    -> JOIN Order_Details od ON b.book_id=od.book_id
+    -> GROUP BY b.title
+    -> ORDER BY revenue DESC
+    -> LIMIT 1;
++-------------------------+---------+
+| title                   | revenue |
++-------------------------+---------+
+| The God of Small Things |  450.00 |
++-------------------------+---------+
+1 row in set (0.00 sec)
+
+mysql> -- 9.Find the author whose books generated the maximum sales revenue.
+mysql> SELECT a.author_name,
+    -> SUM(od.quantity_ordered * od.price_at_time_of_order) AS revenue
+    -> FROM Authors a
+    -> JOIN Books b ON a.author_id=b.author_id
+    -> JOIN Order_Details od ON b.book_id=od.book_id
+    -> GROUP BY a.author_name
+    -> ORDER BY revenue DESC
+    -> LIMIT 1;
++---------------+---------+
+| author_name   | revenue |
++---------------+---------+
+| Chetan Bhagat |  550.00 |
++---------------+---------+
+1 row in set (0.00 sec)
+
+mysql> -- 10.Display customers who purchased books from every available genre.
+mysql> select c.name
+    -> from customers c
+    -> join orders o ON c.customer_id = o.customer_id
+    -> join order_details od ON o.order_id = od.order_id
+    -> join books b ON od.book_id = b.book_id
+    -> group by c.name
+    -> having count(DISTINCT b.genre_id) =(
+    -> select count(*) from genres
+    -> );
+Empty set (0.01 sec)
+
+mysql> -- 11.Find books whose price is higher than the average price of all books.
+mysql> select *
+    -> from books
+    -> where price > (
+    -> select AVG(price)
+    -> from books
+    -> );
++---------+-------------------------+--------+----------------+-----------+----------+
+| book_id | title                   | price  | stock_quantity | author_id | genre_id |
++---------+-------------------------+--------+----------------+-----------+----------+
+|       3 | The God of Small Things | 450.00 |             20 |         2 |        1 |
+|       5 | The Immortals of Meluha | 399.00 |             60 |         4 |        2 |
++---------+-------------------------+--------+----------------+-----------+----------+
+2 rows in set (0.00 sec)
+
+mysql> -- 12.Display the second most expensive book available.
+mysql> select *from books 
+    -> order by price DESC
+    -> LIMIT 1 OFFSET 1;
++---------+-------------------------+--------+----------------+-----------+----------+
+| book_id | title                   | price  | stock_quantity | author_id | genre_id |
++---------+-------------------------+--------+----------------+-----------+----------+
+|       5 | The Immortals of Meluha | 399.00 |             60 |         4 |        2 |
++---------+-------------------------+--------+----------------+-----------+----------+
+1 row in set (0.00 sec)
+
+mysql> -- 13. Find customers who ordered more books than the average books ordered per customer.
+mysql> select c.name,
+    -> SUM(od.quantity_ordered) AS total_books
+    -> from customers c
+    -> join orders o ON c.customer_id = o.customer_id
+    -> join order_details od ON o.order_id = od.order_id
+    -> group by c.name
+    -> having total_books >(
+    -> select AVG(total_qty)
+    -> from(
+    -> select SUM(od.quantity_ordered)as total_qty
+    -> from orders o
+    -> join order_details od ON o.order_id = od.order_id
+    -> group by o.customer_id
+    -> ) t
+    -> );
++--------------+-------------+
+| name         | total_books |
++--------------+-------------+
+| Aarav Sharma |           4 |
++--------------+-------------+
+1 row in set (0.01 sec)
+
+mysql> -- 14.Display the monthly revenue generated by the bookstore.
+mysql> select DATE_format(o.order_date,'%Y-%m') as month,
+    -> SUM(od.quantity_ordered * od.price_at_time_of_order) AS revenue
+    -> from orders o
+    -> join order_details od ON o.order_id = od.order_id
+    -> group by DATE_format(o.order_date, '%Y-%m');
++---------+---------+
+| month   | revenue |
++---------+---------+
+| 2023-05 | 1349.00 |
+| 2023-06 |  450.00 |
++---------+---------+
+2 rows in set (0.01 sec)
+
+mysql> -- 15.Find the month with the highest sales.
+mysql> select DATE_FORMAT(o.order_date,'%Y-%m') as month,
+    -> SUM(od.quantity_ordered * od.price_at_time_of_order) AS revenue
+    -> from orders o
+    -> join order_details od ON o.order_id = od.order_id
+    -> group by date_format(o.order_date,'%Y-%m')
+    -> order by revenue DESC
+    -> LIMIT 1;
++---------+---------+
+| month   | revenue |
++---------+---------+
+| 2023-05 | 1349.00 |
++---------+---------+
+1 row in set (0.00 sec)
+
+mysql> -- 16.Display the top three best-selling authors.
+mysql> select author_name,
+    -> SUM(od.quantity_ordered)as total_sold
+    -> from authors a
+    -> join books b ON a.author_id = b.author_id
+    -> join order_details od ON b.book_id = od.book_id
+    -> group by a.author_name
+    -> order by total_sold DESC
+    -> LIMIT 3;
++---------------+------------+
+| author_name   | total_sold |
++---------------+------------+
+| Chetan Bhagat |          2 |
+| R.K. Narayan  |          2 |
+| Arundhati Roy |          1 |
++---------------+------------+
+3 rows in set (0.00 sec)
+
+mysql> -- 17.Find books that have never been sold but still have stock available.
+mysql> select title
+    -> from books
+    -> where stock_quantity >0
+    -> AND book_id NOT IN(
+    -> select book_id
+    -> from order_details
+    -> );
+Empty set (0.00 sec)
+
+mysql> -- 18. Display customers who purchased books from more than three different genres.
+mysql> SELECT c.name,
+    -> COUNT(DISTINCT b.genre_id) AS genres_bought
+    -> FROM Customers c
+    -> JOIN Orders o ON c.customer_id=o.customer_id
+    -> JOIN Order_Details od ON o.order_id=od.order_id
+    -> JOIN Books b ON od.book_id=b.book_id
+    -> GROUP BY c.name
+    -> HAVING COUNT(DISTINCT b.genre_id)>3;
+Empty set (0.00 sec)
+
+mysql> -- 19.Find the genre that generated the highest revenue.
+mysql> select g.genre_name,
+    -> SUM(od.quantity_ordered * od.price_at_time_of_order) AS revenue
+    -> from genres g
+    -> join books b ON g.genre_id = b.genre_id
+    -> join order_details od ON b.book_id = od.book_id
+    -> group by g.genre_name
+    -> order by revenue DESC
+    -> LIMIT 1;
++------------+---------+
+| genre_name | revenue |
++------------+---------+
+| Fiction    | 1100.00 |
++------------+---------+
+1 row in set (0.00 sec)
+
+mysql> --  20. Display the author whose books have the highest average sales quantity.
+mysql> select a.author_name,
+    -> AVG(od.quantity_ordered) AS average_sales
+    -> from authors a
+    -> join books b ON a.author_id = b.author_id
+    -> join order_details od ON b.book_id = od.book_id
+    -> group by a.author_name
+    -> order by average_sales DESC
+    -> LIMIT 1;
++--------------+---------------+
+| author_name  | average_sales |
++--------------+---------------+
+| R.K. Narayan |        2.0000 |
++--------------+---------------+
+1 row in set (0.00 sec)
+
+mysql> create database studentdb;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> use studentdb;
+Database changed
+
+mysql> ================================================== student management system=======================================================
+
+mysql> create table students(
+    -> student_id int primary key,
+    -> first_name varchar(50),
+    -> last_name varchar(50),
+    -> enrollment_year int
+    -> );
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> -- Create Subjects TableCREATE TABLE Subjects (    subject_id INT PRIMARY KEY,    subject_name VARCHAR(50));-- Create Exams TableCREATE TABLE Exams (    exam_id INT PRIMARY KEY,    exam_name VARCHAR(50),    exam_date DATE);-- Create Marks TableCREATE TABLE Marks (    mark_id INT PRIMARY KEY,    student_id INT,    subject_id INT,    exam_id INT,    score INT,        FOREIGN KEY (student_id) REFERENCES Students(student_id),    FOREIGN KEY (subject_id) REFERENCES Subjects(subject_id),    FOREIGN KEY (exam_id) REFERENCES Exams(exam_id));-- Insert Students DataINSERT INTO Students VALUES(1, 'Aarav', 'Sharma', 2023),(2, 'Diya', 'Patel', 2023),(3, 'Vihaan', 'Rao', 2024),(4, 'Ananya', 'Singh', 2024);-- Insert Subjects DataINSERT INTO Subjects VALUES(101, 'Mathematics'),(102, 'Science'),(103, 'Hindi Literature');-- Insert Exams DataINSERT INTO Exams VALUES(1, 'Half-Yearly 2024', '2024-09-15'),(2, 'Final Annual 2024', '2024-03-20');-- Insert Marks DataINSERT INTO Marks VALUES(1, 1, 101, 1, 85),  (2, 1, 102, 1, 90),  (3, 2, 101, 1, 75),  (4, 2, 102, 1, 60),  (5, 3, 101, 1, 95),  (6, 1, 101, 2, 88),  (7, 2, 101, 2, 79),  (8, 3, 101, 2, 92);
+mysql> select *from students;
+Empty set (0.00 sec)
+
+mysql> -- Create Subjects TableCREATE TABLE Subjects (    subject_id INT PRIMARY KEY,    subject_name VARCHAR(50));
+mysql> -- create subjects table
+mysql> CREATE TABLE Subjects (    subject_id INT PRIMARY KEY,    subject_name VARCHAR(50));
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> -- create exams table
+mysql> CREATE TABLE Exams (    exam_id INT PRIMARY KEY,    exam_name VARCHAR(50),    exam_date DATE);
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> -- create marks table
+mysql> CREATE TABLE Marks (    mark_id INT PRIMARY KEY,    student_id INT,    subject_id INT,    exam_id INT,    score INT,        FOREIGN KEY (student_id) REFERENCES Students(student_id),    FOREIGN KEY (subject_id) REFERENCES Subjects(subject_id),    FOREIGN KEY (exam_id) REFERENCES Exams(exam_id));
+Query OK, 0 rows affected (0.06 sec)
+
+mysql> -- insert students data
+mysql> INSERT INTO Students VALUES(1, 'Aarav', 'Sharma', 2023),(2, 'Diya', 'Patel', 2023),(3, 'Vihaan', 'Rao', 2024),(4, 'Ananya', 'Singh', 2024);
+Query OK, 4 rows affected (0.01 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> -- insert subjects data
+mysql> INSERT INTO Subjects VALUES(101, 'Mathematics'),(102, 'Science'),(103, 'Hindi Literature');-- Insert Exams DataINSERT INTO Exams VALUES(1, 'Half-Yearly 2024', '2024-09-15'),(2, 'Final Annual 2024', '2024-03-20');
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> -- insert exams data
+mysql> INSERT INTO Exams VALUES(1, 'Half-Yearly 2024', '2024-09-15'),(2, 'Final Annual 2024', '2024-03-20');
+Query OK, 2 rows affected (0.02 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> -- insert marks data
+mysql> INSERT INTO Marks VALUES(1, 1, 101, 1, 85),  (2, 1, 102, 1, 90),  (3, 2, 101, 1, 75),  (4, 2, 102, 1, 60),  (5, 3, 101, 1, 95),  (6, 1, 101, 2, 88),  (7, 2, 101, 2, 79),  (8, 3, 101, 2, 92);
+Query OK, 8 rows affected (0.01 sec)
+Records: 8  Duplicates: 0  Warnings: 0
+
+mysql> -- verify data
+mysql> select *from students;
++------------+------------+-----------+-----------------+
+| student_id | first_name | last_name | enrollment_year |
++------------+------------+-----------+-----------------+
+|          1 | Aarav      | Sharma    |            2023 |
+|          2 | Diya       | Patel     |            2023 |
+|          3 | Vihaan     | Rao       |            2024 |
+|          4 | Ananya     | Singh     |            2024 |
++------------+------------+-----------+-----------------+
+4 rows in set (0.00 sec)
+
+mysql> select *from subjects;
++------------+------------------+
+| subject_id | subject_name     |
++------------+------------------+
+|        101 | Mathematics      |
+|        102 | Science          |
+|        103 | Hindi Literature |
++------------+------------------+
+3 rows in set (0.00 sec)
+
+mysql> select *from exams;
++---------+-------------------+------------+
+| exam_id | exam_name         | exam_date  |
++---------+-------------------+------------+
+|       1 | Half-Yearly 2024  | 2024-09-15 |
+|       2 | Final Annual 2024 | 2024-03-20 |
++---------+-------------------+------------+
+2 rows in set (0.00 sec)
+
+mysql> select*from marks;
++---------+------------+------------+---------+-------+
+| mark_id | student_id | subject_id | exam_id | score |
++---------+------------+------------+---------+-------+
+|       1 |          1 |        101 |       1 |    85 |
+|       2 |          1 |        102 |       1 |    90 |
+|       3 |          2 |        101 |       1 |    75 |
+|       4 |          2 |        102 |       1 |    60 |
+|       5 |          3 |        101 |       1 |    95 |
+|       6 |          1 |        101 |       2 |    88 |
+|       7 |          2 |        101 |       2 |    79 |
+|       8 |          3 |        101 |       2 |    92 |
++---------+------------+------------+---------+-------+
+8 rows in set (0.00 sec)
+
+mysql> 2.PRACTICE QUESTIONS
+    -> -------------------------
+    -> LEVEL 1 : SIMPLE(BASIC SELECTIONS & FILTERING)
+    -> -----------------------------------------------
+    -> ^C
+mysql> -- 1.Retrieve all students: List the first name and last name of every student.
+mysql> select first_name, last_name
+    -> from students;
++------------+-----------+
+| first_name | last_name |
++------------+-----------+
+| Aarav      | Sharma    |
+| Diya       | Patel     |
+| Vihaan     | Rao       |
+| Ananya     | Singh     |
++------------+-----------+
+4 rows in set (0.00 sec)
+
+mysql> -- 2.Filter by Score: Find all entries in the Marks table where the score is greater than 80.
+mysql> select *from marks
+    -> where score > 80;
++---------+------------+------------+---------+-------+
+| mark_id | student_id | subject_id | exam_id | score |
++---------+------------+------------+---------+-------+
+|       1 |          1 |        101 |       1 |    85 |
+|       2 |          1 |        102 |       1 |    90 |
+|       5 |          3 |        101 |       1 |    95 |
+|       6 |          1 |        101 |       2 |    88 |
+|       8 |          3 |        101 |       2 |    92 |
++---------+------------+------------+---------+-------+
+5 rows in set (0.00 sec)
+
+mysql> -- 3.Sort Data: List all exams sorted by their date, starting with the most recent.
+mysql> select * from exams
+    -> order by exam_date DESC;
++---------+-------------------+------------+
+| exam_id | exam_name         | exam_date  |
++---------+-------------------+------------+
+|       1 | Half-Yearly 2024  | 2024-09-15 |
+|       2 | Final Annual 2024 | 2024-03-20 |
++---------+-------------------+------------+
+2 rows in set (0.00 sec)
+
+mysql> LEVEL 2 : INTERMEDIATE (JOINS & Aggregation)
+    -> ==============================================
+
+mysql> 
+mysql> -- 4. Student Marks: List the First Name, Subject Name, and Score for every mark recorded.
+mysql> select s.first_name,
+    -> sub.subject_name,
+    -> m.score
+    -> from marks m
+    -> join students s
+    -> on m.student_id = s.student_id
+    -> join subjects sub
+    -> on m.subject_id = sub.subject_id;
++------------+--------------+-------+
+| first_name | subject_name | score |
++------------+--------------+-------+
+| Aarav      | Mathematics  |    85 |
+| Diya       | Mathematics  |    75 |
+| Vihaan     | Mathematics  |    95 |
+| Aarav      | Mathematics  |    88 |
+| Diya       | Mathematics  |    79 |
+| Vihaan     | Mathematics  |    92 |
+| Aarav      | Science      |    90 |
+| Diya       | Science      |    60 |
++------------+--------------+-------+
+8 rows in set (0.00 sec)
+
+mysql> -- 5.Subject Averages: Calculate the average score for each subject.
+mysql> select sub.subject_name,
+    -> AVG(m.score)as average_score
+    -> from subjects sub
+    -> join marks m
+    -> ON sub.subject_id = m.subject_id
+    -> group by sub.subject_name;
++--------------+---------------+
+| subject_name | average_score |
++--------------+---------------+
+| Mathematics  |       85.6667 |
+| Science      |       75.0000 |
++--------------+---------------+
+2 rows in set (0.00 sec)
+
+mysql> -- 6.Count Exams: How many marks have been recorded specifically for "Aarav Sharma"?
+mysql> select s.first_name,
+    -> s.last_name,
+    -> count(m.mark_id) as total_marks
+    -> from students s
+    -> join marks m
+    -> ON s.student_id = m.student_id
+    -> where s.first_name = 'Aarav'
+    -> AND s.last_name = 'Sharma'
+    -> group by s.first_name, s.last_name;
++------------+-----------+-------------+
+| first_name | last_name | total_marks |
++------------+-----------+-------------+
+| Aarav      | Sharma    |           3 |
++------------+-----------+-------------+
+1 row in set (0.00 sec)
+
+mysql> LEVEL 3 :========================================= COMPLEX (SUBQUERIES, GROUPING & LOGIC)=============================================
+
+mysql> -- 7.Top Performer: Find the student who has the highest single score.
+mysql> select s.first_name,
+    -> s.last_name,
+    -> m.score
+    -> from students s
+    -> join marks m
+    -> ON s.student_id = m.student_id
+    -> where m.score = (
+    -> select MAX(score)
+    -> from marks
+    -> );
++------------+-----------+-------+
+| first_name | last_name | score |
++------------+-----------+-------+
+| Vihaan     | Rao       |    95 |
++------------+-----------+-------+
+1 row in set (0.01 sec)
+
+mysql> -- 8.Scores by Exam: Display the Exam Name and total score,only for exams where the total score is greater than 250.
+mysql> select e.exam_name,
+    -> SUM(m.score)as total_score
+    -> from exams e
+    -> join marks m
+    -> ON e.exam_id = m.exam_id
+    -> group by e.exam_name
+    -> having SUM(m.score) > 250;
++-------------------+-------------+
+| exam_name         | total_score |
++-------------------+-------------+
+| Half-Yearly 2024  |         405 |
+| Final Annual 2024 |         259 |
++-------------------+-------------+
+2 rows in set (0.00 sec)
+
+mysql> -- 9.Pass/Fail Label: Display Student Name, Subject, Score, and Status.
+mysql> select concat(s.first_name, ' ', s.last_name) as student_name,
+    -> sub.subject_name,
+    -> m.score,
+    -> CASE
+    -> when m.score >= 70 THEN 'Pass'
+    -> ELSE 'Fail'
+    -> END AS status
+    -> from marks m
+    -> join students s
+    -> ON m.student_id = s.student_id
+    -> join subjects sub
+    -> ON m.subject_id = sub.subject_id;
++--------------+--------------+-------+--------+
+| student_name | subject_name | score | status |
++--------------+--------------+-------+--------+
+| Aarav Sharma | Mathematics  |    85 | Pass   |
+| Aarav Sharma | Science      |    90 | Pass   |
+| Aarav Sharma | Mathematics  |    88 | Pass   |
+| Diya Patel   | Mathematics  |    75 | Pass   |
+| Diya Patel   | Science      |    60 | Fail   |
+| Diya Patel   | Mathematics  |    79 | Pass   |
+| Vihaan Rao   | Mathematics  |    95 | Pass   |
+| Vihaan Rao   | Mathematics  |    92 | Pass   |
++--------------+--------------+-------+--------+
+8 rows in set (0.01 sec)
+
